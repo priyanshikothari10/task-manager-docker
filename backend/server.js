@@ -7,20 +7,35 @@ app.use(express.json());
 
 let tasks = [];
 
-app.get("/tasks", (req, res) => {
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok" });
+});
+
+app.get("/tasks", (_req, res) => {
   res.json(tasks);
 });
 
 app.post("/tasks", (req, res) => {
-  const task = req.body.task;
+  const title = String(req.body.task || "").trim();
+  if (!title) {
+    return res.status(400).json({ error: "Task cannot be empty" });
+  }
+
+  const task = { id: Date.now(), title };
   tasks.push(task);
-  res.json({ message: "Task added" });
+  return res.status(201).json(task);
 });
 
-app.listen(5000, () => {
-  console.log("Backend running on port 5000");
+app.delete("/tasks/:id", (req, res) => {
+  const originalLength = tasks.length;
+  tasks = tasks.filter((task) => task.id !== Number(req.params.id));
+  if (tasks.length === originalLength) {
+    return res.status(404).json({ error: "Task not found" });
+  }
+  return res.status(204).send();
 });
-app.get("/add", (req, res) => {
-  tasks.push("Learn Docker");
-  res.send("Task added");
+
+const port = process.env.PORT || 5000;
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Backend running on port ${port}`);
 });

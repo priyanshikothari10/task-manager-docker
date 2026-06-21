@@ -1,99 +1,56 @@
-# 🚀 Task Manager (Dockerized Full Stack App)
+# Dockerized Task Manager
 
-## 📌 Project Overview
+A small full-stack application demonstrating Docker Compose networking, container health checks, and Nginx reverse proxying.
 
-This is a simple full-stack Task Manager application built using **Node.js (backend)** and **HTML + Nginx (frontend)**.
-The application is fully containerized using **Docker** and managed with **Docker Compose**.
+## Architecture
 
----
-
-## 🧱 Tech Stack
-
-* Frontend: HTML, CSS, JavaScript, Nginx
-* Backend: Node.js, Express.js
-* DevOps: Docker, Docker Compose
-
----
-
-## 🏗️ Project Structure
-
-```
-task-manager/
-│
-├── frontend/
-│   ├── index.html
-│   ├── styles.css
-│   └── Dockerfile
-│
-├── backend/
-│   ├── server.js
-│   ├── package.json
-│   └── Dockerfile
-│
-└── docker-compose.yml
+```text
+Browser -> Nginx frontend (:3000) -> Node.js API (:5000 internal)
 ```
 
----
+The backend is intentionally not published to the host. Nginx forwards `/api/*` requests over the private Compose network.
 
-## ⚙️ How to Run the Project
+## Run
 
-### 1️⃣ Clone the repository
-
-```
+```bash
 git clone https://github.com/priyanshikothari10/task-manager-docker.git
 cd task-manager-docker
+docker compose up --build -d
+docker compose ps
 ```
 
-### 2️⃣ Run using Docker Compose
+Open http://localhost:3000. Stop the project with `docker compose down`.
 
+## Features
+
+- Add and delete tasks
+- Server-side request validation
+- Nginx reverse proxy
+- Backend health check and dependency ordering
+- Multi-stage service isolation through Docker Compose networking
+
+Tasks are stored in memory for this container-networking demo and reset when the backend restarts.
+
+## Screenshots
+
+![Application UI](./screenshots/ui.png)
+
+![Adding a task](./screenshots/add-task.png)
+
+## Verify
+
+```bash
+docker compose config --quiet
+curl http://localhost:3000/api/health
 ```
-docker-compose up --build
-```
 
----
+## Future Improvements
 
-## 🌐 Access the Application
+- Persist tasks in PostgreSQL
+- Add automated API tests
+- Build and publish images with GitHub Actions
+- Deploy the stack to AWS
 
-* Frontend: http://localhost:3000
-* Backend API: http://localhost:5000/tasks
+## Author
 
----
-
-## ✨ Features
-
-* Add tasks dynamically
-* Fetch tasks from backend
-* Simple UI with real-time updates
-* Multi-container architecture
-## 📸 Screenshots
-
-### 🖥️ Application UI
-
-
-### ➕ Adding a Task
-
-
-
----
-
-## 🧠 Learning Outcomes
-
-* Dockerizing frontend and backend services
-* Multi-container management using Docker Compose
-* Container networking concepts
-* Debugging real-world issues
-
----
-
-## 🚀 Future Improvements
-
-* Add database (MongoDB)
-* Improve UI (React)
-* Deploy on AWS EC2
-* Add CI/CD pipeline
-
----
-
-## 👩‍💻 Author
-
-**Priyanshi Kothari**
+Priyanshi Kothari - [GitHub](https://github.com/priyanshikothari10) | [LinkedIn](https://www.linkedin.com/in/priyanshi-kothari-93975932a/)
